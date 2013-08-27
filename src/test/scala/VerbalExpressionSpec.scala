@@ -233,6 +233,17 @@ class VerbalExpressionSpec extends Specification {
     }
   }
 
+  "capturing" should {
+
+    "allow for freetyping between parentensis" in {
+      VerbalExpression()
+        .beginCapture()
+        .range(Array(0, 3))
+        .endCapture()
+        .toString must beEqualTo("([0-3])")
+    }
+  }
+
   "URL https://www.google.com" should {
 
     "be a valid url" in {

@@ -86,8 +86,7 @@ case class VerbalExpression(prefixes:String, expr:String, suffixes:String, modif
       if (enable) removeModifier( 'm' )
       else addModifier( 'm' )
 
-  def multiple(value:String):VerbalExpression =
-    return add(s"${sanitize(value)}+")
+  def multiple(value:String):VerbalExpression = add(s"${sanitize(value)}+")
 
   def or(value:String):VerbalExpression = {
       val newExpr = add(")|(") add(value)
@@ -100,6 +99,10 @@ case class VerbalExpression(prefixes:String, expr:String, suffixes:String, modif
     val p = Pattern.compile(prefixes + expr + suffixes, modifiers)
     Pattern.matches(p.pattern, toTest)
   }
+
+  def beginCapture() = add("(")
+
+  def endCapture() = add(")")
 
   override def toString() = prefixes + expr + suffixes
 
