@@ -22,4 +22,13 @@ val result = if (urlTester test someUrl) "Valid" else "Invalid"
 println(s"$someUrl is $result")
 ```  
 
-For more methods, checkout the [wiki](https://github.com/VerbalExpressions/JSVerbalExpressions/wiki) and the [source](src/main/scala/com/github/verbalexpressions/VerbalExpressions.scala)
+For more methods, checkout the [wiki](https://github.com/VerbalExpressions/JSVerbalExpressions/wiki) and the [source](src/main/scala/com/github/verbalexpressions/VerbalExpression.scala)
+
+sbt
+===
+Add the following to your `build.sbt`:
+```scala
+resolvers += "Sonatype releases" at "http://oss.sonatype.org/content/repositories/releases/"
+
+libraryDependency += "com.github.verbalexpressions" %% "ScalaVerbalExpressions" % "0.0.1"
+```
