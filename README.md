@@ -4,7 +4,9 @@ ScalaVerbalExpressions
 =====================
 
 ```scala
-val tester = VerbalExpression()
+import com.github.verbalexpressions.VerbalExpression
+
+val urlTester = VerbalExpression()
                 .startOfLine()
                 .andThen("http")
                 .maybe("s")
@@ -13,11 +15,11 @@ val tester = VerbalExpression()
                 .anythingBut(" ")
                 .endOfLine()
 
-val testMe = "https://www.google.com"
+val someUrl = "https://www.google.com"
 
-val result = if (tester.test(testMe)) "Valid" else "Invalid"
+val result = if (urlTester test someUrl) "Valid" else "Invalid"
 
-println(s"$testMe is $result url")
+println(s"$someUrl is $result")
 ```  
 
-For more methods checkout the [wiki](https://github.com/VerbalExpressions/JSVerbalExpressions/wiki) or the [source](src/main/scala/VerbalExpressions.scala)
+For more methods, checkout the [wiki](https://github.com/VerbalExpressions/JSVerbalExpressions/wiki) and the [source](src/main/scala/com/github/verbalexpressions/VerbalExpressions.scala)
