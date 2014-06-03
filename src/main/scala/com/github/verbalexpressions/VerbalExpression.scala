@@ -5,11 +5,9 @@ case class VerbalExpression(prefixes: String = "", expression: String = "", suff
 
   private[this] def sanitize(value: String) = if(value == null) value else Pattern.quote(value)
 
+  def replace(source: String, value: String) = source.replaceAll(toString, value)
+
   def add(value: String) = VerbalExpression(prefixes, expression + value, suffixes, modifiers)
-
-  def startOfLine(enable: Boolean = true) = VerbalExpression(if (enable) "^" else "", expression, suffixes, modifiers)
-
-  def endOfLine(enable: Boolean = true) = VerbalExpression(prefixes, expression, if (enable) "$" else "", modifiers)
 
   def andThen(value: String) = add(s"(${sanitize(value)})")
 
@@ -25,12 +23,6 @@ case class VerbalExpression(prefixes: String = "", expression: String = "", suff
 
   def somethingBut(value: String) = add(s"([^${sanitize(value)}]+)")
 
-  def replace(source: String, value: String) = source.replaceAll(toString, value)
-
-  def lineBreak = add("(\\n|(\\r\\n))")
-
-  def br = lineBreak
-
   def tab = add("\\t")
 
   def word = add("\\w+")
@@ -38,6 +30,18 @@ case class VerbalExpression(prefixes: String = "", expression: String = "", suff
   def anyOf(value: String) = add(s"[${sanitize(value)}]")
 
   def any = anyOf _
+
+  def lineBreak = add("(\\n|(\\r\\n))")
+
+  def br = lineBreak
+
+  def startOfLine(enable: Boolean = true) = VerbalExpression(if (enable) "^" else "", expression, suffixes, modifiers)
+
+  def endOfLine(enable: Boolean = true) = VerbalExpression(prefixes, expression, if (enable) "$" else "", modifiers)
+
+  def or(value: String) = VerbalExpression("(" + prefixes, add(")|(").add(value).expression, ")" + suffixes, modifiers)
+
+  def or(value: VerbalExpression): VerbalExpression = or(value.expression)
 
   def range(from: Any, to: Any) = add(s"[$from-$to]")
 
@@ -70,17 +74,13 @@ case class VerbalExpression(prefixes: String = "", expression: String = "", suff
 
   def multiple(value: String) = add(s"${sanitize(value)}+")
 
-  def or(value: String) = VerbalExpression("(" + prefixes, add(")|(").add(value).expression, ")" + suffixes, modifiers)
-
-  def or(value: VerbalExpression): VerbalExpression = or(value.expression)
-
-  def test = Pattern.matches(compile.pattern, _)
-
-  def compile = Pattern.compile(toString, modifiers)
-
   def beginCapture = add("(")
 
   def endCapture = add(")")
+
+  def compile = Pattern.compile(toString, modifiers)
+
+  def test = Pattern.matches(compile.pattern, _)
 
   override def toString = prefixes + expression + suffixes
 }
