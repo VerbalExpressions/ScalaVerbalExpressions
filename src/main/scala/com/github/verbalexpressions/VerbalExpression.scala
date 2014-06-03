@@ -41,7 +41,7 @@ case class VerbalExpression(prefixes: String = "", expression: String = "", suff
 
   def endOfLine(enable: Boolean = true) = VerbalExpression(prefixes, expression, if (enable) "$" else "", modifiers)
 
-  def or(value: String) = VerbalExpression("(" + prefixes, add(")|(").add(value).expression, ")" + suffixes, modifiers)
+  def or(value: String) = VerbalExpression("(" + prefixes, expression + ")|(" + value, ")" + suffixes, modifiers)
 
   def or(value: VerbalExpression): VerbalExpression = or(value.expression)
 
