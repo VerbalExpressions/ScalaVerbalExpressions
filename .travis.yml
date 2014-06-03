@@ -1,3 +1,6 @@
 language: scala
 
 scala: 2.11.1
+
+after_success:
+  - sbt coveralls

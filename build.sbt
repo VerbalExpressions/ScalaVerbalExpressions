@@ -9,3 +9,11 @@ libraryDependencies ++= Seq(
 )
 
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
+
+instrumentSettings
+
+CoverallsPlugin.coverallsSettings
+
+CoverallsPlugin.CoverallsKeys.coverallsToken := Some("KaV31nMn63pJSb6hSLsbT97lfgBtB8VEL")
+
+autoCompilerPlugins := true
