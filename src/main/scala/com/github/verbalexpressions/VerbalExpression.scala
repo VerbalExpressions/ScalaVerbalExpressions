@@ -1,113 +1,86 @@
 package com.github.verbalexpressions
 
-import java.util.regex.Pattern;
+case class VerbalExpression(prefixes: String, expr: String, suffixes: String, modifiers: Int) {
+  import java.util.regex.Pattern
 
-case class VerbalExpression(prefixes:String, expr:String, suffixes:String, modifiers:Int) {
+  private[this] def sanitize(value: String) = if(value == null) value else Pattern.quote(value)
 
-  private def sanitize(value:String) =
-      if(value == null) value
-      else Pattern.quote(value)
+  def add(value: String) = VerbalExpression(prefixes, expr + value, suffixes, modifiers)
 
-  def add(value:String):VerbalExpression =
-    VerbalExpression(prefixes, expr + value, suffixes, modifiers)
+  def startOfLine(enable: Boolean = true) = VerbalExpression(if (enable) "^" else "", expr, suffixes, modifiers)
 
-  def startOfLine(enable:Boolean):VerbalExpression =
-    if(enable) VerbalExpression("^", expr, suffixes, modifiers)
-    else VerbalExpression("", expr, suffixes, modifiers)
+  def endOfLine(enable: Boolean = true) = VerbalExpression(prefixes, expr, if (enable) "$" else "", modifiers)
 
-  def startOfLine():VerbalExpression = startOfLine(true)
+  def andThen(value: String) = add(s"(${sanitize(value)})")
 
-  def endOfLine(enable:Boolean):VerbalExpression =
-    if(enable) VerbalExpression(prefixes, expr, "$", modifiers)
-    else VerbalExpression(prefixes, expr, "", modifiers)
+  def find = andThen _
 
-  def endOfLine():VerbalExpression = endOfLine(true)
+  def maybe(value: String) = add(s"(${sanitize(value)})?")
 
-  def andThen(value:String):VerbalExpression = add(s"(${sanitize(value)})")
+  def anything = add("(.*)")
 
-  def find(value:String):VerbalExpression = andThen(value)
+  def anythingBut(value: String) = add(s"([^${sanitize(value)}]*)")
 
-  def maybe(value:String):VerbalExpression = add(s"(${sanitize(value)})?")
+  def something = add("(.+)")
 
-  def anything():VerbalExpression = add("(.*)")
+  def somethingBut(value: String) = add(s"([^${sanitize(value)}]+)")
 
-  def anythingBut(value:String):VerbalExpression = add(s"([^${sanitize(value)}]*)")
+  def replace(source: String, value: String) = source.replaceAll(toString, value)
 
-  def something():VerbalExpression = add("(.+)")
+  def lineBreak = add("(\\n|(\\r\\n))")
 
-  def somethingBut(value:String):VerbalExpression = add(s"([^${sanitize(value)}]+)")
+  def br = lineBreak
 
-  def replace(source:String, value:String):String =
-    source.replaceAll(toString, value)
+  def tab = add("\\t")
 
-  def lineBreak():VerbalExpression = add("(\\n|(\\r\\n))")
+  def word = add("\\w+")
 
-  def br():VerbalExpression = lineBreak()
+  def anyOf(value: String) = add(s"[${sanitize(value)}]")
 
-  def tab():VerbalExpression = add("\\t")
+  def any = anyOf _
 
-  def word():VerbalExpression = add("\\w+")
+  def range(from: Any, to: Any) = add(s"[$from-$to]")
 
-  def anyOf(value:String):VerbalExpression = add(s"[${sanitize(value)}]")
-
-  def any(value:String):VerbalExpression = anyOf(value)
-
-  def range(from:Any, to:Any):VerbalExpression = add(s"[$from-$to]")
-
-  def range(args:Array[Any]):VerbalExpression = {
+  def range(args: Array[Any]) = {
     val ranges = (0 to args.length - 1).filter( _ % 2 == 0).foldRight(List[String]()) { (from, res) =>
        args(from) + "-" + args(from+1) :: res
     }
     add(s"[${ranges.mkString}]")
   }
 
-  private def charModToInt(modifier :Char) =
-    modifier match {
-      case 'd' => Pattern.UNIX_LINES
-      case 'i' => Pattern.CASE_INSENSITIVE
-      case 'x' => Pattern.COMMENTS
-      case 'm' => Pattern.MULTILINE
-      case 's' => Pattern.DOTALL
-      case 'u' => Pattern.UNICODE_CASE
-      case 'U' => Pattern.UNICODE_CHARACTER_CLASS
-    }
-
-  def addModifier(modifier :Char):VerbalExpression =
-    VerbalExpression(prefixes, expr, suffixes, modifiers | charModToInt(modifier))
-
-  def removeModifier(modifier :Char):VerbalExpression =
-    VerbalExpression(prefixes, expr, suffixes, modifiers ^ charModToInt(modifier))
-
-  def withAnyCase(enable:Boolean):VerbalExpression =
-    if (enable) addModifier( 'i' )
-    else removeModifier( 'i' )
-
-  def withAnyCase():VerbalExpression = withAnyCase(true)
-
-  def searchOneLine(enable:Boolean):VerbalExpression =
-      if (enable) removeModifier( 'm' )
-      else addModifier( 'm' )
-
-  def multiple(value:String):VerbalExpression = add(s"${sanitize(value)}+")
-
-  def or(value:String):VerbalExpression = {
-      val newExpr = add(")|(") add(value)
-      VerbalExpression("(" + prefixes, newExpr.expr, ")" + suffixes, modifiers)
+  private def charModToInt(modifier: Char) = modifier match {
+    case 'd' => Pattern.UNIX_LINES
+    case 'i' => Pattern.CASE_INSENSITIVE
+    case 'x' => Pattern.COMMENTS
+    case 'm' => Pattern.MULTILINE
+    case 's' => Pattern.DOTALL
+    case 'u' => Pattern.UNICODE_CASE
+    case 'U' => Pattern.UNICODE_CHARACTER_CLASS
   }
 
-  def or(value:VerbalExpression):VerbalExpression = or(value.expr)
+  def addModifier(modifier: Char) = VerbalExpression(prefixes, expr, suffixes, modifiers | charModToInt(modifier))
 
-  def test(toTest:String) = {
-    val p = Pattern.compile(prefixes + expr + suffixes, modifiers)
-    Pattern.matches(p.pattern, toTest)
-  }
+  def removeModifier(modifier: Char) = VerbalExpression(prefixes, expr, suffixes, modifiers ^ charModToInt(modifier))
 
-  def beginCapture() = add("(")
+  def withAnyCase(enable: Boolean = true) = if (enable) addModifier('i') else removeModifier('i')
 
-  def endCapture() = add(")")
+  def searchOneLine(enable: Boolean):VerbalExpression = if (enable) removeModifier('m') else addModifier('m')
 
-  override def toString() = prefixes + expr + suffixes
+  def multiple(value: String) = add(s"${sanitize(value)}+")
 
+  def or(value: String) = VerbalExpression("(" + prefixes, add(")|(").add(value).expr, ")" + suffixes, modifiers)
+
+  def or(value: VerbalExpression): VerbalExpression = or(value.expr)
+
+  def test(toTest: String) = compile.matcher(toTest).matches()
+
+  def compile = Pattern.compile(toString, modifiers)
+
+  def beginCapture = add("(")
+
+  def endCapture = add(")")
+
+  override def toString = prefixes + expr + suffixes
 }
 
 object VerbalExpression {

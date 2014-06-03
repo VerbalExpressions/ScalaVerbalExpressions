@@ -126,7 +126,7 @@ class VerbalExpressionSpec extends Specification {
   "anything()" should {
     "add 'catch all' to expression" in {
        VerbalExpression()
-        .anything()
+        .anything
         .toString must beEqualTo("(.*)")
     }
   }
@@ -142,7 +142,7 @@ class VerbalExpressionSpec extends Specification {
   "something()" should {
     "add expression for any one character" in {
        VerbalExpression()
-        .something()
+        .something
         .toString must beEqualTo("(.+)")
      }
   }
@@ -183,7 +183,7 @@ class VerbalExpressionSpec extends Specification {
 
     "accept array of ranges" in {
       VerbalExpression()
-        .range(Array(0, 3))
+        .range(0, 3)
         .toString must beEqualTo("[0-3]")
     }
 
@@ -239,9 +239,9 @@ class VerbalExpressionSpec extends Specification {
 
     "allow for freetyping between parentensis" in {
       VerbalExpression()
-        .beginCapture()
+        .beginCapture
         .range(Array(0, 3))
-        .endCapture()
+        .endCapture
         .toString must beEqualTo("([0-3])")
     }
   }
