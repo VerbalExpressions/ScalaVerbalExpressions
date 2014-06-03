@@ -1,3 +1,5 @@
+package com.github.verbalexpressions
+
 import org.specs2.mutable._
 
 class VerbalExpressionSpec extends Specification {

@@ -1,3 +1,5 @@
+package com.github.verbalexpressions
+
 import java.util.regex.Pattern;
 
 case class VerbalExpression(prefixes:String, expr:String, suffixes:String, modifiers:Int) {
