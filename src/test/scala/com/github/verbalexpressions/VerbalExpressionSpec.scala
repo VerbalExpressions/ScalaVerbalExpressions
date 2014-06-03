@@ -5,220 +5,205 @@ import org.specs2.mutable._
 class VerbalExpressionSpec extends Specification {
 
   "The 'VerbalExpression' class" should {
-
-    "have a simple contructor" in {
-      val e = VerbalExpression()
-      e.toString must be empty
+    "have a simple constructor" in {
+      VerbalExpression().toString must beEmpty
     }
 
-    "have take a prefix in the contructor" in {
-      val e = VerbalExpression("prefix", "", "", 0)
-      e.toString must beEqualTo("prefix")
+    "have take a prefix in the constructor" in {
+      VerbalExpression("prefix").toString mustEqual "prefix"
     }
 
-    "have take an expression in the contructor" in {
-      val e = VerbalExpression("", "expr", "", 0)
-      e.toString must beEqualTo("expr")
+    "have take an expression in the constructor" in {
+      VerbalExpression(expression = "test").toString mustEqual "test"
     }
 
-    "have take a suffix in the contructor" in {
-      val e = VerbalExpression("", "", "suffix", 0)
-      e.toString must beEqualTo("suffix")
+    "have take a suffix in the constructor" in {
+      VerbalExpression(suffixes = "suffix").toString mustEqual "suffix"
     }
   }
 
-  "add()" should {
+  "add" should {
     "add a random string to expression" in {
-      VerbalExpression().add("add").toString must beEqualTo("add")
+      VerbalExpression().add("add").toString mustEqual "add"
     }
 
     "append to expression" in {
-      VerbalExpression("", "first", "", 0)
+      VerbalExpression(expression = "first")
         .add("second")
-        .toString must beEqualTo("firstsecond")
+        .toString mustEqual "firstsecond"
     }
   }
 
-  "startOfLine()" should {
-
+  "startOfLine" should {
     "add a 'start of line' character" in {
-      VerbalExpression().startOfLine().toString must beEqualTo("^")
+      VerbalExpression().startOfLine().toString mustEqual "^"
     }
 
     "add the character to the beginning" in {
-      VerbalExpression("", "expr", "", 0)
-        .startOfLine()
-        .toString must beEqualTo("^expr")
+      VerbalExpression(expression = "expr").startOfLine().toString mustEqual "^expr"
     }
 
     "toogle a start of line character" in {
       VerbalExpression()
         .startOfLine(true)
         .startOfLine(false)
-        .toString must beEqualTo("")
+        .toString mustEqual ""
     }
 
     "have a startOfLine(false) method to remove a start of line character" in {
       VerbalExpression("^", "expr", "", 0)
         .startOfLine(false)
-        .toString must beEqualTo("expr")
+        .toString mustEqual "expr"
     }
   }
 
-  "endOfLine()" should {
-
+  "endOfLine" should {
     "add a end of line character" in {
       VerbalExpression()
         .endOfLine()
-        .toString must beEqualTo("$")
+        .toString mustEqual "$"
     }
 
-    "have a endOfLine(boolean) method to toogle a start of line character" in {
+    "have a endOfLine(boolean) method to toggle a start of line character" in {
       VerbalExpression()
         .endOfLine(true)
         .endOfLine(false)
-        .toString must beEqualTo("")
+        .toString mustEqual ""
     }
 
     "have a endOfLine(false) method to remove a start of line character" in {
       VerbalExpression()
         .endOfLine(false)
-        .toString must beEqualTo("")
+        .toString mustEqual ""
     }
   }
 
-  "andThen()" should {
-
+  "andThen" should {
     "add quoted string to expression" in {
       VerbalExpression()
         .andThen("andThen")
-        .toString must beEqualTo("(\\QandThen\\E)")
+        .toString mustEqual "(\\QandThen\\E)"
     }
 
     "append to expression" in {
        VerbalExpression("", "before", "", 0)
         .andThen("andThen")
-        .toString must beEqualTo("before(\\QandThen\\E)")
+        .toString mustEqual "before(\\QandThen\\E)"
     }
 
-    "be aliased to find()" in {
+    "be aliased to find" in {
        VerbalExpression()
         .find("find")
-        .toString must beEqualTo("(\\Qfind\\E)")
+        .toString mustEqual "(\\Qfind\\E)"
     }
   }
 
-  "maybe()" should {
-
+  "maybe" should {
     "add a quoted string with question mark to expression" in {
       VerbalExpression()
         .maybe("maybe")
-        .toString must beEqualTo("(\\Qmaybe\\E)?")
+        .toString mustEqual "(\\Qmaybe\\E)?"
     }
 
     "append to the expression" in {
       VerbalExpression("", "before", "", 0)
         .maybe("maybe")
-        .toString must beEqualTo("before(\\Qmaybe\\E)?")
+        .toString mustEqual "before(\\Qmaybe\\E)?"
     }
   }
 
-  "anything()" should {
+  "anything" should {
     "add 'catch all' to expression" in {
        VerbalExpression()
         .anything
-        .toString must beEqualTo("(.*)")
+        .toString mustEqual "(.*)"
     }
   }
 
-  "anythingBut()" should {
+  "anythingBut" should {
     "add expression for block characters" in {
        VerbalExpression()
         .anythingBut("this")
-        .toString must beEqualTo("([^\\Qthis\\E]*)")
+        .toString mustEqual "([^\\Qthis\\E]*)"
      }
   }
 
-  "something()" should {
+  "something" should {
     "add expression for any one character" in {
        VerbalExpression()
         .something
-        .toString must beEqualTo("(.+)")
+        .toString mustEqual "(.+)"
      }
   }
 
-  "somethingBut()" should {
+  "somethingBut" should {
     "add expression for block any one character" in {
        VerbalExpression()
         .somethingBut("this")
-        .toString must beEqualTo("([^\\Qthis\\E]+)")
+        .toString mustEqual "([^\\Qthis\\E]+)"
      }
   }
 
-  "replace()" should {
-
+  "replace" should {
     "replace with one character" in {
        VerbalExpression()
         .add("a")
         .replace("Magnus", "u")
-        .toString must beEqualTo("Mugnus")
+        .toString mustEqual "Mugnus"
      }
 
      "replace source based on the expression" in {
        VerbalExpression()
         .range("a", "n")
         .replace("Magnus", "u")
-        .toString must beEqualTo("Muuuus")
+        .toString mustEqual "Muuuus"
      }
   }
 
 
-  "range()" should {
-
+  "range" should {
     "accept to and from" in {
       VerbalExpression()
         .range(0, 3)
-        .toString must beEqualTo("[0-3]")
+        .toString mustEqual "[0-3]"
     }
 
     "accept array of ranges" in {
       VerbalExpression()
         .range(0, 3)
-        .toString must beEqualTo("[0-3]")
+        .toString mustEqual "[0-3]"
     }
 
     "accept array of ranges" in {
       VerbalExpression()
         .range(Array(0, 3, 4, 6))
-        .toString must beEqualTo("[0-34-6]")
+        .toString mustEqual "[0-34-6]"
     }
   }
 
-  "or()" should {
-
+  "or" should {
     "append a new expression after an |" in {
       VerbalExpression()
         .range(0, 3)
         .or(VerbalExpression().range(6, 9))
-        .toString must beEqualTo("([0-3])|([6-9])")
+        .toString mustEqual "([0-3])|([6-9])"
     }
     "append a new expression after an |" in {
       VerbalExpression()
         .add("aa")
         .or(VerbalExpression().add("bb"))
-        .toString must beEqualTo("(aa)|(bb)")
+        .toString mustEqual "(aa)|(bb)"
     }
 
     "append a new expression after an |" in {
       VerbalExpression()
         .add("aa")
         .or("bb")
-        .toString must beEqualTo("(aa)|(bb)")
+        .toString mustEqual "(aa)|(bb)"
     }
   }
 
-  "test()" should {
-
+  "test" should {
     "match a given string to the build expression" in {
       VerbalExpression()
         .startOfLine()
@@ -236,29 +221,29 @@ class VerbalExpressionSpec extends Specification {
   }
 
   "capturing" should {
-
     "allow for freetyping between parentensis" in {
       VerbalExpression()
         .beginCapture
         .range(Array(0, 3))
         .endCapture
-        .toString must beEqualTo("([0-3])")
+        .toString mustEqual "([0-3])"
     }
   }
 
-  "URL https://www.google.com" should {
-
-    "be a valid url" in {
-      val testMe = "https://www.google.com"
-      VerbalExpression()
+  "README example" should {
+    "work" in {
+      val urlTester = VerbalExpression()
         .startOfLine()
-        .andThen( "http" )
-        .maybe( "s" )
-        .andThen( "://" )
-        .maybe( "www." )
-        .anythingBut( " " )
+        .andThen("http")
+        .maybe("s")
+        .andThen("://")
+        .maybe("www.")
+        .anythingBut(" ")
         .endOfLine()
-        .test( testMe ) must beTrue
+
+      val someUrl = "https://www.google.com"
+
+      urlTester.test(someUrl) must beTrue
     }
   }
 }
