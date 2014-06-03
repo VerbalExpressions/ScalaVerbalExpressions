@@ -18,7 +18,7 @@ class VerbalExpressionSpec extends Specification {
     }
 
     "have take a suffix in the constructor" in {
-      VerbalExpression(suffixes = "suffix").toString mustEqual "suffix"
+      VerbalExpression(suffix = "suffix").toString mustEqual "suffix"
     }
   }
 

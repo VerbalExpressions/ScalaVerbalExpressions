@@ -1,6 +1,6 @@
 package com.github.verbalexpressions
 
-case class VerbalExpression(prefixes: String = "", expression: String = "", suffixes: String = "", modifiers: Int = 0) {
+case class VerbalExpression(prefix: String = "", expression: String = "", suffix: String = "", modifiers: Int = 0) {
   import java.util.regex.Pattern
 
   private[this] def sanitize(value: String) = if(value == null) value else Pattern.quote(value)
@@ -37,11 +37,11 @@ case class VerbalExpression(prefixes: String = "", expression: String = "", suff
 
   def br = lineBreak
 
-  def startOfLine(enable: Boolean = true) = copy(prefixes = if (enable) "^" else "")
+  def startOfLine(enable: Boolean = true) = copy(prefix = if (enable) "^" else "")
 
-  def endOfLine(enable: Boolean = true) = copy(suffixes = if (enable) "$" else "")
+  def endOfLine(enable: Boolean = true) = copy(suffix = if (enable) "$" else "")
 
-  def or(value: String) = copy("(" + prefixes, expression + ")|(" + value, ")" + suffixes)
+  def or(value: String) = copy("(" + prefix, expression + ")|(" + value, ")" + suffix)
 
   def or(value: VerbalExpression): VerbalExpression = or(value.expression)
 
@@ -86,7 +86,7 @@ case class VerbalExpression(prefixes: String = "", expression: String = "", suff
 
   def endCapture = add(")")
 
-  def pattern = Pattern.compile(prefixes + expression + suffixes, modifiers)
+  def pattern = Pattern.compile(prefix + expression + suffix, modifiers)
 
   def test(toTest: String) = Pattern.matches(toString, toTest)
 
