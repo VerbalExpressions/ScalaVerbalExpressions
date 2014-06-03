@@ -23,14 +23,13 @@ case class VerbalExpression(prefix: String = "", expression: String = "", suffix
   def something = add("(.+)")
   def somethingBut(value: String) = add(s"([^${quote(value)}]+)")
 
-  def tab = add("\\t")
+  def whitespace = add("\\s+")
   def word = add("\\w+")
 
   def anyOf(value: String) = add(s"[${quote(value)}]")
   def any = anyOf _
 
   def lineBreak = add("(\\n|(\\r\\n))")
-  def br = lineBreak
 
   def startOfLine(enable: Boolean = true) = copy(prefix = if (enable) "^" else "")
   def endOfLine(enable: Boolean = true) = copy(suffix = if (enable) "$" else "")
@@ -59,8 +58,9 @@ case class VerbalExpression(prefix: String = "", expression: String = "", suffix
   def searchOneLine(enable: Boolean = true) = modify('m', enable)
   def stopAtFirst(enable: Boolean = false) = modify('g', enable)
 
-  def repeatPrevious(n: Int) = ???
-  def repeatPrevious(atleast: Int, atmost: Int) = ???
+  def repeat(n: Int) = add(s"{$n}")
+  def repeat(atleast: Int, atmost: Int) = add(s"{$atleast,$atmost}")
+  def repeatAtleast(n: Int) = add(s"{$n,}")
 
   def beginCapture = add("(")
   def endCapture = add(")")
