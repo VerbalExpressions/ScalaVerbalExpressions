@@ -1,15 +1,15 @@
 package com.github.verbalexpressions
 
-case class VerbalExpression(prefixes: String, expr: String, suffixes: String, modifiers: Int) {
+case class VerbalExpression(prefixes: String = "", expression: String = "", suffixes: String = "", modifiers: Int = 0) {
   import java.util.regex.Pattern
 
   private[this] def sanitize(value: String) = if(value == null) value else Pattern.quote(value)
 
-  def add(value: String) = VerbalExpression(prefixes, expr + value, suffixes, modifiers)
+  def add(value: String) = VerbalExpression(prefixes, expression + value, suffixes, modifiers)
 
-  def startOfLine(enable: Boolean = true) = VerbalExpression(if (enable) "^" else "", expr, suffixes, modifiers)
+  def startOfLine(enable: Boolean = true) = VerbalExpression(if (enable) "^" else "", expression, suffixes, modifiers)
 
-  def endOfLine(enable: Boolean = true) = VerbalExpression(prefixes, expr, if (enable) "$" else "", modifiers)
+  def endOfLine(enable: Boolean = true) = VerbalExpression(prefixes, expression, if (enable) "$" else "", modifiers)
 
   def andThen(value: String) = add(s"(${sanitize(value)})")
 
@@ -48,31 +48,33 @@ case class VerbalExpression(prefixes: String, expr: String, suffixes: String, mo
     add(s"[${ranges.mkString}]")
   }
 
-  private def charModToInt(modifier: Char) = modifier match {
-    case 'd' => Pattern.UNIX_LINES
-    case 'i' => Pattern.CASE_INSENSITIVE
-    case 'x' => Pattern.COMMENTS
-    case 'm' => Pattern.MULTILINE
-    case 's' => Pattern.DOTALL
-    case 'u' => Pattern.UNICODE_CASE
-    case 'U' => Pattern.UNICODE_CHARACTER_CLASS
-  }
+  private[this] val charModToInt = Map(
+    'd' -> Pattern.UNIX_LINES,
+    'i' -> Pattern.CASE_INSENSITIVE,
+    'x' -> Pattern.COMMENTS,
+    'm' -> Pattern.MULTILINE,
+    's' -> Pattern.DOTALL,
+    'u' -> Pattern.UNICODE_CASE,
+    'U' -> Pattern.UNICODE_CHARACTER_CLASS
+  )
 
-  def addModifier(modifier: Char) = VerbalExpression(prefixes, expr, suffixes, modifiers | charModToInt(modifier))
+  def modify(modifier: Char, add: Boolean) = VerbalExpression(prefixes, expression, suffixes, if (add) modifiers | charModToInt(modifier) else modifiers ^ charModToInt(modifier))
 
-  def removeModifier(modifier: Char) = VerbalExpression(prefixes, expr, suffixes, modifiers ^ charModToInt(modifier))
+  def addModifier(modifier: Char) = modify(modifier, true)
 
-  def withAnyCase(enable: Boolean = true) = if (enable) addModifier('i') else removeModifier('i')
+  def removeModifier(modifier: Char) = modify(modifier, false)
 
-  def searchOneLine(enable: Boolean):VerbalExpression = if (enable) removeModifier('m') else addModifier('m')
+  def withAnyCase(enable: Boolean = true) = modify('i', enable)
+
+  def searchOneLine(enable: Boolean = true) = modify('m', enable)
 
   def multiple(value: String) = add(s"${sanitize(value)}+")
 
-  def or(value: String) = VerbalExpression("(" + prefixes, add(")|(").add(value).expr, ")" + suffixes, modifiers)
+  def or(value: String) = VerbalExpression("(" + prefixes, add(")|(").add(value).expression, ")" + suffixes, modifiers)
 
-  def or(value: VerbalExpression): VerbalExpression = or(value.expr)
+  def or(value: VerbalExpression): VerbalExpression = or(value.expression)
 
-  def test(toTest: String) = compile.matcher(toTest).matches()
+  def test = Pattern.matches(compile.pattern, _)
 
   def compile = Pattern.compile(toString, modifiers)
 
@@ -80,9 +82,5 @@ case class VerbalExpression(prefixes: String, expr: String, suffixes: String, mo
 
   def endCapture = add(")")
 
-  override def toString = prefixes + expr + suffixes
-}
-
-object VerbalExpression {
-  def apply():VerbalExpression = VerbalExpression("", "", "", 0)
+  override def toString = prefixes + expression + suffixes
 }
