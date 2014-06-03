@@ -168,15 +168,15 @@ class VerbalExpressionSpec extends Specification {
         .toString mustEqual "[0-3]"
     }
 
-    "accept array of ranges" in {
+    "accept unclosed range" in {
       VerbalExpression()
-        .range(0, 3)
-        .toString mustEqual "[0-3]"
+        .range(0, 3, 5)
+        .toString mustEqual "[0-35]"
     }
 
     "accept array of ranges" in {
       VerbalExpression()
-        .range(Array(0, 3, 4, 6))
+        .range(0, 3, 4, 6)
         .toString mustEqual "[0-34-6]"
     }
   }
@@ -224,7 +224,7 @@ class VerbalExpressionSpec extends Specification {
     "allow for freetyping between parentensis" in {
       VerbalExpression()
         .beginCapture
-        .range(Array(0, 3))
+        .range(0, 3)
         .endCapture
         .toString mustEqual "([0-3])"
     }

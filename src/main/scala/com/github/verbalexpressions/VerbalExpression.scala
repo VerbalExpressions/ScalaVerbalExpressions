@@ -44,14 +44,7 @@ case class VerbalExpression(prefix: String = "", expression: String = "", suffix
 
   def or(value: VerbalExpression): VerbalExpression = or(value.expression)
 
-  def range(from: Any, to: Any) = add(s"[$from-$to]")
-
-  def range(args: Array[Any]) = {
-    val ranges = (0 to args.length - 1).filter( _ % 2 == 0).foldRight(List[String]()) { (from, res) =>
-       args(from) + "-" + args(from+1) :: res
-    }
-    add(s"[${ranges.mkString}]")
-  }
+  def range(args: Any*) = add(s"[${(args grouped 2 map {_ mkString "-"}).mkString}]")
 
   private[this] val charModToInt = Map(
     'd' -> Pattern.UNIX_LINES,
