@@ -2,5 +2,22 @@
 
 ScalaVerbalExpressions
 =====================
-## Other implementations  
-You can view all implementations on [VerbalExpressions.github.io](http://VerbalExpressions.github.io)
+
+```scala
+val tester = VerbalExpression()
+                .startOfLine()
+                .andThen("http")
+                .maybe("s")
+                .andThen("://")
+                .maybe("www.")
+                .anythingBut(" ")
+                .endOfLine()
+
+val testMe = "https://www.google.com"
+
+val result = if (tester.test(testMe)) "Valid" else "Invalid"
+
+println(s"$testMe is $result url")
+```  
+
+For more methods checkout the [wiki](https://github.com/VerbalExpressions/JSVerbalExpressions/wiki) or the [source](src/main/scala/VerbalExpressions.scala)
