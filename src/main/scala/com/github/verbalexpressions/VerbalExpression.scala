@@ -2,34 +2,33 @@ package com.github.verbalexpressions
 
 case class VerbalExpression(prefix: String = "", expression: String = "", suffix: String = "", modifiers: Int = 0) {
   import java.util.regex.Pattern
-
-  private[this] def sanitize(value: String) = if(value == null) value else Pattern.quote(value)
+  import java.util.regex.Pattern.quote
 
   def replace(source: String, value: String) = source.replaceAll(toString, value)
 
   def add(value: String) = copy(expression = expression + value)
 
-  def andThen(value: String) = add(s"(${sanitize(value)})")
+  def andThen(value: String) = add(s"(${quote(value)})")
 
   def then = andThen _
 
   def find = andThen _
 
-  def maybe(value: String) = add(s"(${sanitize(value)})?")
+  def maybe(value: String) = add(s"(${quote(value)})?")
 
   def anything = add("(.*)")
 
-  def anythingBut(value: String) = add(s"([^${sanitize(value)}]*)")
+  def anythingBut(value: String) = add(s"([^${quote(value)}]*)")
 
   def something = add("(.+)")
 
-  def somethingBut(value: String) = add(s"([^${sanitize(value)}]+)")
+  def somethingBut(value: String) = add(s"([^${quote(value)}]+)")
 
   def tab = add("\\t")
 
   def word = add("\\w+")
 
-  def anyOf(value: String) = add(s"[${sanitize(value)}]")
+  def anyOf(value: String) = add(s"[${quote(value)}]")
 
   def any = anyOf _
 
@@ -80,7 +79,7 @@ case class VerbalExpression(prefix: String = "", expression: String = "", suffix
 
   def repeatPrevious(atleast: Int, atmost: Int) = ???
 
-  def multiple(value: String) = add(s"${sanitize(value)}+")
+  def multiple(value: String) = add(s"${quote(value)}+")
 
   def beginCapture = add("(")
 
