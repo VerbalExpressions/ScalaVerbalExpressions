@@ -7,7 +7,7 @@ case class VerbalExpression(prefixes: String = "", expression: String = "", suff
 
   def replace(source: String, value: String) = source.replaceAll(toString, value)
 
-  def add(value: String) = VerbalExpression(prefixes, expression + value, suffixes, modifiers)
+  def add(value: String) = copy(expression = expression + value)
 
   def andThen(value: String) = add(s"(${sanitize(value)})")
 
@@ -37,11 +37,11 @@ case class VerbalExpression(prefixes: String = "", expression: String = "", suff
 
   def br = lineBreak
 
-  def startOfLine(enable: Boolean = true) = VerbalExpression(if (enable) "^" else "", expression, suffixes, modifiers)
+  def startOfLine(enable: Boolean = true) = copy(prefixes = if (enable) "^" else "")
 
-  def endOfLine(enable: Boolean = true) = VerbalExpression(prefixes, expression, if (enable) "$" else "", modifiers)
+  def endOfLine(enable: Boolean = true) = copy(suffixes = if (enable) "$" else "")
 
-  def or(value: String) = VerbalExpression("(" + prefixes, expression + ")|(" + value, ")" + suffixes, modifiers)
+  def or(value: String) = copy("(" + prefixes, expression + ")|(" + value, ")" + suffixes)
 
   def or(value: VerbalExpression): VerbalExpression = or(value.expression)
 
@@ -64,7 +64,7 @@ case class VerbalExpression(prefixes: String = "", expression: String = "", suff
     'U' -> Pattern.UNICODE_CHARACTER_CLASS
   )
 
-  def modify(modifier: Char, add: Boolean) = VerbalExpression(prefixes, expression, suffixes, if (add) modifiers | charModToInt(modifier) else modifiers ^ charModToInt(modifier))
+  def modify(modifier: Char, add: Boolean) =  copy(modifiers = if (add) modifiers | charModToInt(modifier) else modifiers ^ charModToInt(modifier))
 
   def addModifier(modifier: Char) = modify(modifier, true)
 
