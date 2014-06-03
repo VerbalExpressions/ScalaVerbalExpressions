@@ -11,6 +11,8 @@ case class VerbalExpression(prefixes: String = "", expression: String = "", suff
 
   def andThen(value: String) = add(s"(${sanitize(value)})")
 
+  def then = andThen _
+
   def find = andThen _
 
   def maybe(value: String) = add(s"(${sanitize(value)})?")
@@ -72,15 +74,21 @@ case class VerbalExpression(prefixes: String = "", expression: String = "", suff
 
   def searchOneLine(enable: Boolean = true) = modify('m', enable)
 
+  def stopAtFirst(enable: Boolean = false) = modify('g', enable)
+
+  def repeatPrevious(n: Int) = ???
+
+  def repeatPrevious(atleast: Int, atmost: Int) = ???
+
   def multiple(value: String) = add(s"${sanitize(value)}+")
 
   def beginCapture = add("(")
 
   def endCapture = add(")")
 
-  def compile = Pattern.compile(toString, modifiers)
+  def pattern = Pattern.compile(prefixes + expression + suffixes, modifiers)
 
-  def test = Pattern.matches(compile.pattern, _)
+  def test(toTest: String) = Pattern.matches(toString, toTest)
 
-  override def toString = prefixes + expression + suffixes
+  override def toString = pattern.pattern()
 }
