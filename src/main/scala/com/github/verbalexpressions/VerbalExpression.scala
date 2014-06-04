@@ -62,6 +62,7 @@ case class VerbalExpression(prefix: String = "", expression: String = "", suffix
 
   def test = Pattern.matches(toString, _: String)
   def check = test
+  def notMatch(test: String) = !check(test)
 
   override def toString = regexp
 }
@@ -83,7 +84,7 @@ object VerbalExpression {
   implicit class StringMatchUtils(s: String) {
     def is(expr: VerbalExpression) = expr check s
     def matches = is _
-    def isNot(expr: VerbalExpression) = !is(expr)
+    def isNot(expr: VerbalExpression) = expr notMatch s
   }
 
   val $ = VerbalExpression()

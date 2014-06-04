@@ -232,24 +232,19 @@ class VerbalExpressionSpec extends Specification {
       val fraction = $.andThen(".").digits()
       val number = $.maybe("-").digits().maybe(fraction)
 
-      assert("3" is number)
-      assert("-4" is number)
-      assert("-4.58" is number, number.regexp)
-      assert("0." isNot number)
-      assert("hello" isNot number)
-      assert("4.3.2" isNot number)
+      assert(Seq("3", "-4", "-0.458") forall number.check)
+      assert(Seq("0.", "hello", "4.3.2") forall number.notMatch)
 
-      val urlTester = $.startOfLine()
-                       .andThen("http")
-                       .maybe("s")
-                       .andThen("://")
-                       .maybe("www.")
-                       .anythingBut(" ")
-                       .endOfLine()
+      val validUrl = $.startOfLine()
+                      .andThen("http")
+                      .maybe("s")
+                      .andThen("://")
+                      .maybe("www.")
+                      .anythingBut(" ")
+                      .endOfLine()
 
-      val someUrl = "https://www.google.com"
-
-      assert(urlTester test someUrl)
+      assert("https://www.google.com" is validUrl)
+      assert("ftp://home.comcast.net" isNot validUrl)
 
       ok
     }
