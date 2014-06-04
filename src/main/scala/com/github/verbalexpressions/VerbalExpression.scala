@@ -60,13 +60,17 @@ case class VerbalExpression(prefix: String = "", expression: String = "", suffix
   def possessive = add("+")
 
   lazy val compile = Pattern.compile(prefix + expression + suffix, modifiers)
-  def test(toTest: String) = Pattern.matches(toString, toTest)
+  def regexp = compile.pattern()
 
-  override def toString = compile.pattern()
+  def test = Pattern.matches(toString, _: String)
+  def check = test _
+  def matches = test _
+
+  override def toString = regexp
 }
 
 object VerbalExpression {
-  sealed class Modifier(val mask: Int)
+  sealed abstract class Modifier(val mask: Int)
   object UnixLines extends Modifier(Pattern.UNIX_LINES)
   object CaseInsensitive extends Modifier(Pattern.CASE_INSENSITIVE)
   object Comments extends Modifier(Pattern.COMMENTS)
