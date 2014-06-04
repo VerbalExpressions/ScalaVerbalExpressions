@@ -229,12 +229,6 @@ class VerbalExpressionSpec extends Specification {
       import com.github.verbalexpressions.VerbalExpression
       import VerbalExpression._
 
-      val fraction = $.andThen(".").digits()
-      val number = $.maybe("-").digits().maybe(fraction)
-
-      assert(Seq("3", "-4", "-0.458") forall number.check)
-      assert(Seq("0.", "hello", "4.3.2") forall number.notMatch)
-
       val validUrl = $.startOfLine()
                       .andThen("http")
                       .maybe("s")
@@ -245,6 +239,13 @@ class VerbalExpressionSpec extends Specification {
 
       assert("https://www.google.com" is validUrl)
       assert("ftp://home.comcast.net" isNot validUrl)
+
+      // VerbalExpressions can be nested within each other
+      val fraction = $.andThen(".").digits()
+      val number = $.maybe("-").digits().maybe(fraction)
+
+      assert(Seq("3", "-4", "-0.458") forall number.check)
+      assert(Seq("0.", "hello", "4.3.2") forall number.notMatch)
 
       ok
     }

@@ -5,8 +5,6 @@ import com.github.verbalexpressions.VerbalExpression._
 
 case class VerbalExpression(prefix: String = "", expression: String = "", suffix: String = "", modifiers: Int = 0) {
 
-  def replace(source: String, value: String) = source.replaceAll(toString, value)
-
   def add(value: String) = copy(expression = expression + value)
 
   def andThen(value: StringOrVerbalExp) = add(s"($value)")
@@ -15,8 +13,11 @@ case class VerbalExpression(prefix: String = "", expression: String = "", suffix
 
   def maybe(value: StringOrVerbalExp) = add(s"($value)?")
 
-  def multiple(value: StringOrVerbalExp) = add(s"($value)+")
-  def many = multiple _
+  def zeroOrMore(value: StringOrVerbalExp) = add(s"($value)*")
+
+  def oneOrMore(value: StringOrVerbalExp) = add(s"($value)+")
+  def multiple = oneOrMore _
+  def many = oneOrMore _
 
   def anything = add("(.*)")
   def anythingBut(value: StringOrVerbalExp) = add(s"([^$value]*)")
@@ -24,8 +25,8 @@ case class VerbalExpression(prefix: String = "", expression: String = "", suffix
   def something = add("(.+)")
   def somethingBut(value: StringOrVerbalExp) = add(s"([^$value]+)")
 
-  def whitespace(enable: Boolean = true) = add(if (enable) "\\s+" else "\\S+")
-  def word(enable: Boolean = true) = add(if (enable) "\\w+" else "\\W+")
+  def whitespaces(enable: Boolean = true) = add(if (enable) "\\s+" else "\\S+")
+  def words(enable: Boolean = true) = add(if (enable) "\\w+" else "\\W+")
   def digits(enable: Boolean = true) = add(if (enable) "\\d+" else "\\D+")
 
   def anyOf(value: StringOrVerbalExp) = add(s"[$value]")
@@ -56,6 +57,8 @@ case class VerbalExpression(prefix: String = "", expression: String = "", suffix
 
   def reluctant = add("?")
   def possessive = add("+")
+
+  def replace(source: String, value: String) = source.replaceAll(toString, value)
 
   lazy val compile = Pattern.compile(prefix + expression + suffix, modifiers)
   def regexp = compile.pattern()
