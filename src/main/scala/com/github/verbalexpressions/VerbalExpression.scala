@@ -65,8 +65,8 @@ case class VerbalExpression(prefix: String = "", expression: String = "", suffix
   def beginCapture = add("(")
   def endCapture = add(")")
 
+  lazy val compile = Pattern.compile(prefix + expression + suffix, modifiers)
   def test(toTest: String) = Pattern.matches(toString, toTest)
-  def pattern = Pattern.compile(prefix + expression + suffix, modifiers)
 
-  override def toString = pattern.pattern()
+  override def toString = compile.pattern()
 }
