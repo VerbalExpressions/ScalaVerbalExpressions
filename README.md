@@ -34,5 +34,5 @@ Add the following to your `build.sbt`:
 ```scala
 resolvers += "Sonatype releases" at "http://oss.sonatype.org/content/repositories/releases/"
 
-libraryDependency += "com.github.verbalexpressions" %% "ScalaVerbalExpressions" % "0.0.1"
+libraryDependency += "com.github.verbalexpressions" %% "ScalaVerbalExpressions" % "1.0.0"
 ```

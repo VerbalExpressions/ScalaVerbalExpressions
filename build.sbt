@@ -2,11 +2,9 @@ import SonatypeKeys._
 
 name := "ScalaVerbalExpression"
 
-version := "0.0.1"
+version := "1.0.0"
 
 description := "VerbalExpressions in Scala"
-
-homepage := Some(url("http://github.com/pathikrit/ScalaVerbalExpression"))
 
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 
@@ -34,23 +32,16 @@ CoverallsPlugin.coverallsSettings
 autoCompilerPlugins := true
 
 pomExtra := {
-  <url>http://github.com/pathikrit/ScalaVerbalExpression</url>
-    <licenses>
-      <license>
-        <name>The MIT License</name>
-        <url>http://www.opensource.org/licenses/MIT</url>
-        <distribution>repo</distribution>
-      </license>
-    </licenses>
-    <scm>
-      <url>git@github.com:pathikrit/ScalaVerbalExpression.git</url>
-      <connection>scm:git:git@github.com:pathikrit/ScalaVerbalExpression.git</connection>
-    </scm>
-    <developers>
-      <developer>
-        <id>pathikrit</id>
-        <name>Pathikrit Bhowmick</name>
-        <url>http://github.com/pathikrit</url>
-      </developer>
-    </developers>
+  <url>http://github.com/pathikrit/ScalaVerbalExpressions</url>
+  <scm>
+    <url>git@github.com:pathikrit/ScalaVerbalExpressions.git</url>
+    <connection>scm:git:git@github.com:pathikrit/ScalaVerbalExpressions.git</connection>
+  </scm>
+  <developers>
+    <developer>
+      <id>pathikrit</id>
+      <name>Pathikrit Bhowmick</name>
+      <url>http://github.com/pathikrit</url>
+    </developer>
+  </developers>
 }
