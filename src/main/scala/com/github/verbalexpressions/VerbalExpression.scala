@@ -1,7 +1,9 @@
 package com.github.verbalexpressions
 
+import java.util.regex.Pattern
+import com.github.verbalexpressions.VerbalExpression._
+
 case class VerbalExpression(prefix: String = "", expression: String = "", suffix: String = "", modifiers: Int = 0) {
-  import java.util.regex.Pattern
   import java.util.regex.Pattern.quote
 
   def replace(source: String, value: String) = source.replaceAll(toString, value)
@@ -39,24 +41,13 @@ case class VerbalExpression(prefix: String = "", expression: String = "", suffix
 
   def range(args: (Any, Any)*) = add(s"[${(args map {case (a, b) => s"$a-$b"}).mkString}]")
 
-  private[this] val charModToInt = Map(
-    'd' -> Pattern.UNIX_LINES,
-    'i' -> Pattern.CASE_INSENSITIVE,
-    'x' -> Pattern.COMMENTS,
-    'm' -> Pattern.MULTILINE,
-    's' -> Pattern.DOTALL,
-    'u' -> Pattern.UNICODE_CASE,
-    'U' -> Pattern.UNICODE_CHARACTER_CLASS
-  )
+  def addModifier(modifier: Modifier) = copy(modifiers = modifiers | modifier.mask)
+  def removeModifier(modifier: Modifier) = copy(modifiers = modifiers ^ modifier.mask)
 
-  def addModifier(modifier: Char) = copy(modifiers = modifiers | charModToInt(modifier))
-  def removeModifier(modifier: Char) = copy(modifiers = modifiers ^ charModToInt(modifier))
+  def modify(modifier: Modifier, add: Boolean) = if (add) addModifier(modifier) else removeModifier(modifier)
 
-  def modify(modifier: Char, add: Boolean) = if (add) addModifier(modifier) else removeModifier(modifier)
-
-  def withAnyCase(enable: Boolean = true) = modify('i', enable)
-  def searchOneLine(enable: Boolean = true) = modify('m', enable)
-  def stopAtFirst(enable: Boolean = false) = modify('g', enable)
+  def withAnyCase(enable: Boolean = true) = modify(CaseInsensitive, enable)
+  def searchOneLine(enable: Boolean = true) = modify(MultiLine, enable)
 
   def repeat(n: Int) = add(s"{$n}")
   def repeat(atleast: Int, atmost: Int) = add(s"{$atleast,$atmost}")
@@ -72,4 +63,15 @@ case class VerbalExpression(prefix: String = "", expression: String = "", suffix
   def test(toTest: String) = Pattern.matches(toString, toTest)
 
   override def toString = compile.pattern()
+}
+
+object VerbalExpression {
+  sealed class Modifier(val mask: Int)
+  object UnixLines extends Modifier(Pattern.UNIX_LINES)
+  object CaseInsensitive extends Modifier(Pattern.CASE_INSENSITIVE)
+  object Comments extends Modifier(Pattern.COMMENTS)
+  object MultiLine extends Modifier(Pattern.MULTILINE)
+  object Dotall extends Modifier(Pattern.DOTALL)
+  object UnixCase extends Modifier(Pattern.UNICODE_CASE)
+  //object UnicodeCharacterClass extends(Pattern.UNICODE_CHARACTER_CLASS)
 }
