@@ -23,21 +23,21 @@ case class VerbalExpression(prefix: String = "", expression: String = "", suffix
   def something = add("(.+)")
   def somethingBut(value: String) = add(s"([^${quote(value)}]+)")
 
-  def whitespace = add("\\s+")
-  def word = add("\\w+")
+  def whitespace(enable: Boolean = true) = add(if (enable) "\\s+" else "\\S+")
+  def word(enable: Boolean = true) = add(if (enable) "\\w+" else "\\W+")
+  def digits(enable: Boolean = true) = add(if (enable) "\\d+" else "\\D+")
 
   def anyOf(value: String) = add(s"[${quote(value)}]")
   def any = anyOf _
 
   def lineBreak = add("(\\n|(\\r\\n))")
-
   def startOfLine(enable: Boolean = true) = copy(prefix = if (enable) "^" else "")
   def endOfLine(enable: Boolean = true) = copy(suffix = if (enable) "$" else "")
 
   def or(value: String) = copy("(" + prefix, expression + ")|(" + value, ")" + suffix)
   def or(value: VerbalExpression): VerbalExpression = or(value.expression)
 
-  def range(args: Any*) = add(s"[${(args grouped 2 map {_ mkString "-"}).mkString}]")
+  def range(args: (Any, Any)*) = add(s"[${(args map {case (a, b) => s"$a-$b"}).mkString}]")
 
   private[this] val charModToInt = Map(
     'd' -> Pattern.UNIX_LINES,
@@ -64,6 +64,9 @@ case class VerbalExpression(prefix: String = "", expression: String = "", suffix
 
   def beginCapture = add("(")
   def endCapture = add(")")
+
+  def reluctant = add("?")
+  def possessive = add("+")
 
   lazy val compile = Pattern.compile(prefix + expression + suffix, modifiers)
   def test(toTest: String) = Pattern.matches(toString, toTest)

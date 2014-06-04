@@ -154,7 +154,7 @@ class VerbalExpressionSpec extends Specification {
 
      "replace source based on the expression" in {
        VerbalExpression()
-        .range("a", "n")
+        .range("a" -> "n")
         .replace("Magnus", "u")
         .toString mustEqual "Muuuus"
      }
@@ -164,19 +164,13 @@ class VerbalExpressionSpec extends Specification {
   "range" should {
     "accept to and from" in {
       VerbalExpression()
-        .range(0, 3)
+        .range(0 -> 3)
         .toString mustEqual "[0-3]"
-    }
-
-    "accept unclosed range" in {
-      VerbalExpression()
-        .range(0, 3, 5)
-        .toString mustEqual "[0-35]"
     }
 
     "accept array of ranges" in {
       VerbalExpression()
-        .range(0, 3, 4, 6)
+        .range(0 -> 3, 4 -> 6)
         .toString mustEqual "[0-34-6]"
     }
   }
@@ -184,8 +178,8 @@ class VerbalExpressionSpec extends Specification {
   "or" should {
     "append a new expression after an |" in {
       VerbalExpression()
-        .range(0, 3)
-        .or(VerbalExpression().range(6, 9))
+        .range(0 -> 3)
+        .or(VerbalExpression().range(6 -> 9))
         .toString mustEqual "([0-3])|([6-9])"
     }
     "append a new expression after an |" in {
@@ -224,7 +218,7 @@ class VerbalExpressionSpec extends Specification {
     "allow for freetyping between parentensis" in {
       VerbalExpression()
         .beginCapture
-        .range(0, 3)
+        .range(0 -> 3)
         .endCapture
         .toString mustEqual "([0-3])"
     }
@@ -236,7 +230,7 @@ class VerbalExpressionSpec extends Specification {
         .startOfLine()
         .andThen("http")
         .maybe("s")
-        .andThen("://")
+        .then("://")
         .maybe("www.")
         .anythingBut(" ")
         .endOfLine()
