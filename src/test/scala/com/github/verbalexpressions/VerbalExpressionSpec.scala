@@ -193,7 +193,7 @@ class VerbalExpressionSpec extends Specification {
       VerbalExpression()
         .add("aa")
         .or("bb")
-        .toString mustEqual "(aa)|(bb)"
+        .toString mustEqual "(aa)|(\\Qbb\\E)"
     }
   }
 
@@ -224,20 +224,34 @@ class VerbalExpressionSpec extends Specification {
     }
   }
 
-  "README example" should {
+  "README examples" should {
     "work" in {
-      val urlTester = VerbalExpression()
-        .startOfLine()
-        .andThen("http")
-        .maybe("s")
-        .then("://")
-        .maybe("www.")
-        .anythingBut(" ")
-        .endOfLine()
+      import com.github.verbalexpressions.VerbalExpression
+      import VerbalExpression._
+
+      val fraction = $.andThen(".").digits()
+      val number = $.maybe("-").digits().maybe(fraction)
+
+      assert("3" is number)
+      assert("-4" is number)
+      assert("-4.58" is number, number.regexp)
+      assert("0." isNot number)
+      assert("hello" isNot number)
+      assert("4.3.2" isNot number)
+
+      val urlTester = $.startOfLine()
+                       .andThen("http")
+                       .maybe("s")
+                       .andThen("://")
+                       .maybe("www.")
+                       .anythingBut(" ")
+                       .endOfLine()
 
       val someUrl = "https://www.google.com"
 
-      urlTester.test(someUrl) must beTrue
+      assert(urlTester test someUrl)
+
+      ok
     }
   }
 }

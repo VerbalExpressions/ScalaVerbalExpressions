@@ -17,7 +17,8 @@ scalaVersion := "2.11.1"
 crossScalaVersions := Seq("2.10.4", "2.11.1")
 
 scalacOptions ++= Seq(
-  "-unchecked", "-deprecation", "-feature"
+  "-unchecked", "-deprecation", "-feature",
+  "-language:postfixOps,implicitConversions,experimental.macros,dynamics,existentials,higherKinds"
 )
 
 libraryDependencies ++= Seq(
