@@ -10,9 +10,9 @@ licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 
 organization := "com.github.verbalexpressions"
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.7"
 
-crossScalaVersions := Seq("2.10.4", "2.11.1")
+crossScalaVersions := Seq("2.10.6", "2.11.7")
 
 scalacOptions ++= Seq(
   "-unchecked", "-deprecation", "-feature",
@@ -20,14 +20,10 @@ scalacOptions ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "org.specs2" %% "specs2" % "2.3.12" % "test"
+  "org.specs2" %% "specs2" % "2.3.13" % "test"
 )
 
 sonatypeSettings
-
-instrumentSettings
-
-CoverallsPlugin.coverallsSettings
 
 autoCompilerPlugins := true
 
