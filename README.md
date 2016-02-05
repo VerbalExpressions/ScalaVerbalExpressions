@@ -32,7 +32,7 @@ sbt
 ===
 Add the following to your `build.sbt`:
 ```scala
-resolvers += "Sonatype releases" at "http://oss.sonatype.org/content/repositories/releases/"
+resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositories/releases/"
 
-libraryDependency += "com.github.verbalexpressions" %% "ScalaVerbalExpressions" % "1.0.0"
+libraryDependency += "com.github.verbalexpressions" %% "scalaverbalexpression" % "1.0.1"
 ```
