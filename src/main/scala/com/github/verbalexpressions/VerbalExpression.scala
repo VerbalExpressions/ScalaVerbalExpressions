@@ -3,9 +3,9 @@ package com.github.verbalexpressions
 import java.util.regex.Pattern
 import com.github.verbalexpressions.VerbalExpression._
 
-case class VerbalExpression(prefix: String = "", expression: String = "", suffix: String = "", modifiers: Int = 0) {
+final case class VerbalExpression(prefix: String = "", expression: String = "", suffix: String = "", modifiers: Int = 0) {
 
-  def add(value: String) = copy(expression = expression + value)
+  private[verbalexpressions] def add(value: String) = copy(expression = expression + value)
 
   def andThen(value: StringOrVerbalExp) = add(s"($value)")
   def `then` = andThen _
