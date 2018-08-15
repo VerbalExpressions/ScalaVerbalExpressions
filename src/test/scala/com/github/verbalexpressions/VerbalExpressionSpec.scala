@@ -2,7 +2,7 @@ package com.github.verbalexpressions
 
 import org.specs2.mutable._
 
-class VerbalExpressionSpec extends Specification {
+final class VerbalExpressionSpec extends Specification {
 
   "The 'VerbalExpression' class" should {
     "have a simple constructor" in {
@@ -51,7 +51,7 @@ class VerbalExpressionSpec extends Specification {
     }
 
     "have a startOfLine(false) method to remove a start of line character" in {
-      VerbalExpression("^", "expr", "", 0)
+      VerbalExpression("^", "expr")
         .startOfLine(false)
         .toString mustEqual "expr"
     }
@@ -86,7 +86,7 @@ class VerbalExpressionSpec extends Specification {
     }
 
     "append to expression" in {
-       VerbalExpression("", "before", "", 0)
+       VerbalExpression("", "before")
         .andThen("andThen")
         .toString mustEqual "before(\\QandThen\\E)"
     }
@@ -106,7 +106,7 @@ class VerbalExpressionSpec extends Specification {
     }
 
     "append to the expression" in {
-      VerbalExpression("", "before", "", 0)
+      VerbalExpression("", "before")
         .maybe("maybe")
         .toString mustEqual "before(\\Qmaybe\\E)?"
     }
@@ -148,15 +148,13 @@ class VerbalExpressionSpec extends Specification {
     "replace with one character" in {
        VerbalExpression()
         .add("a")
-        .replace("Magnus", "u")
-        .toString mustEqual "Mugnus"
+        .replace("Magnus", "u") mustEqual "Mugnus"
      }
 
      "replace source based on the expression" in {
        VerbalExpression()
         .range("a" -> "n")
-        .replace("Magnus", "u")
-        .toString mustEqual "Muuuus"
+        .replace("Magnus", "u") mustEqual "Muuuus"
      }
   }
 
@@ -226,7 +224,6 @@ class VerbalExpressionSpec extends Specification {
 
   "README examples" should {
     "work" in {
-      import com.github.verbalexpressions.VerbalExpression
       import VerbalExpression._
 
       val validUrl = $.startOfLine()
@@ -250,4 +247,29 @@ class VerbalExpressionSpec extends Specification {
       ok
     }
   }
+
+
+  "zeroOrMore" should {
+    "add asterisk with the given value" in {
+      VerbalExpression()
+        .zeroOrMore("v")
+        .toString mustEqual "(\\Qv\\E)*"
+
+      VerbalExpression()
+        .find("abc")
+        .zeroOrMore("d")
+        .toString mustEqual "(\\Qabc\\E)(\\Qd\\E)*"
+
+    }
+  }
+
+  "oneOrMore" should {
+    "add a + with the given value" in {
+      VerbalExpression()
+        .oneOrMore("4")
+        .toString mustEqual "(\\Q4\\E)+"
+    }
+
+  }
+
 }
