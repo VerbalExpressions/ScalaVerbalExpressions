@@ -33,8 +33,13 @@ final case class VerbalExpression(prefix: String = "", expression: String = "", 
   def any = anyOf _
 
   def lineBreak = add("(\\n|(\\r\\n))")
-  def startOfLine(enable: Boolean = true) = copy(prefix = if (enable) "^" else "")
-  def endOfLine(enable: Boolean = true) = copy(suffix = if (enable) "$" else "")
+  def mustStartLine() = startOfLine()
+  def lineStartNotMandatory() = startOfLine(false)
+  private[verbalexpressions] def startOfLine(enable: Boolean = true) = copy(prefix = if (enable) "^" else "")
+
+  def mustEndLine() = endOfLine()
+  def endOfLineNotMandatory() = endOfLine(false)
+  private[verbalexpressions] def endOfLine(enable: Boolean = true) = copy(suffix = if (enable) "$" else "")
 
   def or(value: StringOrVerbalExp) = copy("(" + prefix, expression + ")|(" + value, ")" + suffix)
 

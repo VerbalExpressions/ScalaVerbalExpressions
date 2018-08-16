@@ -55,6 +55,16 @@ final class VerbalExpressionSpec extends Specification {
         .startOfLine(false)
         .toString mustEqual "expr"
     }
+
+    "be turned on with 'mustStartLine'" in {
+      VerbalExpression().mustStartLine().toString mustEqual "^"
+    }
+
+    "be turned off with 'lineStartNotMandatory'" in {
+      VerbalExpression("^", "expr")
+        .lineStartNotMandatory()
+        .toString mustEqual "expr"
+    }
   }
 
   "endOfLine" should {
