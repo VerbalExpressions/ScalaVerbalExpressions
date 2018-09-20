@@ -2,7 +2,7 @@ import SonatypeKeys._
 
 name := "ScalaVerbalExpression"
 
-version := "1.0.0"
+version := "1.1.0"
 
 description := "VerbalExpressions in Scala"
 
@@ -10,9 +10,11 @@ licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 
 organization := "com.github.verbalexpressions"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.12.3"
 
-crossScalaVersions := Seq("2.10.6", "2.11.7")
+sbtVersion := "0.13.16"
+
+crossScalaVersions := Seq("2.10.6","2.11.11","2.12.3")
 
 scalacOptions ++= Seq(
   "-unchecked", "-deprecation", "-feature",
@@ -20,7 +22,7 @@ scalacOptions ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "org.specs2" %% "specs2" % "2.3.13" % "test"
+  "org.specs2" %% "specs2-core" % "3.9.5" % "test"
 )
 
 sonatypeSettings
